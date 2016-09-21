@@ -120,25 +120,27 @@
               (progn
                 (setq freex-mode-has-run-already t)
                 (freex-fontify-update-implicit-link-regexp)))
-      
-	  (if (eq major-mode 'muse-mode)
-	      ;; add our fontification hook to the muse-colors-region-hook
-	      ;; the last argument tells it to be buffer local
-	      (add-hook 'muse-colors-buffer-hook 'freex-fontify-region nil t)
-	    ;; do our own font-locking
-	    (progn
-	      (set (make-local-variable 'font-lock-defaults)
-		   `(nil t nil nil beginning-of-line
-			 (font-lock-fontify-region-function . freex-fontify-region)
-			 (font-lock-unfontify-region-function
-			  . freex-unhighlight-region)))
-	      (set (make-local-variable 'font-lock-fontify-region-function)
-		   'freex-fontify-region)
-	      (set (make-local-variable 'font-lock-unfontify-region-function)
-		   'freex-unhighlight-region)
-	      (font-lock-mode 1)))
-	  ;; now do all the embedding (and fontifying)
-	  (freex-embed-buffer))))))
+
+      (if (eq major-mode 'muse-mode)
+          ;; add our fontification hook to the muse-colors-region-hook
+          ;; the last argument tells it to be buffer local
+          (add-hook 'muse-colors-buffer-hook 'freex-fontify-region nil t)
+        (if (eq major-mode 'org-mode)
+            (add-hook 'org-font-lock-hook 'freex-fontify-region nil t)
+          ;; do our own font-locking
+          (progn
+            (set (make-local-variable 'font-lock-defaults)
+                 `(nil t nil nil beginning-of-line
+                       (font-lock-fontify-region-function . freex-fontify-region)
+                       (font-lock-unfontify-region-function
+                        . freex-unhighlight-region)))
+            (set (make-local-variable 'font-lock-fontify-region-function)
+                 'freex-fontify-region)
+            (set (make-local-variable 'font-lock-unfontify-region-function)
+                 'freex-unhighlight-region)
+            (font-lock-mode 1))))
+      ;; now do all the embedding (and fontifying)
+      (freex-embed-buffer))))))
 
 
 (defun defreexify ()
@@ -147,7 +149,7 @@
   ;; stop using freex custom save
   (remove-hook 'write-contents-hooks 'freex-embed-save t)
   ;; unfontify the buffer
-  (when (not (eq major-mode 'muse-mode))
+  (when (or (not (eq major-mode 'muse-mode))(not (eq major-mode 'org-mode)))
     (kill-local-variable 'font-lock-defaults)
     (kill-local-variable 'font-lock-fontify-region-function)
     (kill-local-variable 'font-lock-unfontify-region-function))
@@ -163,7 +165,7 @@
    :keymap freex-mode-map
    (when (not freex-embed-saving-p)
      (if freex-mode
-	 (freexify)
+     (freexify)
        (defreexify))))
 
 

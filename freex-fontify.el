@@ -173,7 +173,7 @@ active in the current buffer.")
         (modified-p (buffer-modified-p))
         deactivate-mark)
     (unwind-protect
-    (if (eq major-mode 'muse-mode)
+    (if (or (eq major-mode 'muse-mode) (eq major-mode 'org-mode))
         ;; remove only freex-specific properties
         (remove-text-properties
          begin end '(freex-link nil link-file nil link-text nil
