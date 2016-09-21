@@ -54,67 +54,67 @@
   (let ((filename (buffer-file-name)))
     ;; we only want to go into freex mode if there is a filename and
     (if (not filename)
-	;; can't start freex unless there is a buffer file name
-	(progn
-	  (freex-mode -1)
-	  (message "You can not enter freex mode if the buffer has no filename."))
+    ;; can't start freex unless there is a buffer file name
+    (progn
+      (freex-mode -1)
+      (message "You can not enter freex mode if the buffer has no filename."))
       ;; is in the proper freex directory
       (if (not (equal (file-name-directory filename) freex-mode-dir))
-	  ;; we have a filename, but it is in the wrong directory
-	  ;; don't go into freex mode
-	  (progn
-	    (freex-mode -1)
-	    (message "You can not enter freex mode when not in the proper directory."))
-	;; we are either visiting a valid freex file or a scratch buffer
-	(progn
-	  ;; if the buffer is visiting a file (i.e. not scratch),
-	  ;; and that file exists, then we can try and get its id
-	  (if (file-exists-p filename)
-	      (progn
-		;; need to tell it to remove overlays before, and re-embed
-		;; them after, reverting the buffer
-		;;
-		;; the final two arguments say to prepend it (rather than
-		;; append - we don't really care) and to make this a
-		;; buffer-local variable (this is important, so that our
-		;; revert modifications only affect freex-mode
-		(add-hook 'before-revert-hook
-			  'freex-embed-before-revert nil t)
-		(add-hook 'after-revert-hook
-			  'freex-embed-after-revert nil t)
-		(setq freex-embed-ov-props
-		      (plist-put
-		       freex-embed-ov-props 'id
-		       (number-to-string
-			(freex-sqlalchemy-get-nugid-from-filename
-			 (file-name-nondirectory (buffer-file-name)))))))
-	    ;; This is the case when we have a scratch/temporary buffer that
-	    ;; contains embedded nuggets.  In such a case we would like to
-	    ;; save the nuggets, but not save the scratch buffer holding
-	    ;; them.  If you would like to save the scratch buffer to file,
-	    ;; it is necessary to save as.
+      ;; we have a filename, but it is in the wrong directory
+      ;; don't go into freex mode
+      (progn
+        (freex-mode -1)
+        (message "You can not enter freex mode when not in the proper directory."))
+    ;; we are either visiting a valid freex file or a scratch buffer
+    (progn
+      ;; if the buffer is visiting a file (i.e. not scratch),
+      ;; and that file exists, then we can try and get its id
+      (if (file-exists-p filename)
+          (progn
+        ;; need to tell it to remove overlays before, and re-embed
+        ;; them after, reverting the buffer
+        ;;
+        ;; the final two arguments say to prepend it (rather than
+        ;; append - we don't really care) and to make this a
+        ;; buffer-local variable (this is important, so that our
+        ;; revert modifications only affect freex-mode
+        (add-hook 'before-revert-hook
+              'freex-embed-before-revert nil t)
+        (add-hook 'after-revert-hook
+              'freex-embed-after-revert nil t)
+        (setq freex-embed-ov-props
+              (plist-put
+               freex-embed-ov-props 'id
+               (number-to-string
+            (freex-sqlalchemy-get-nugid-from-filename
+             (file-name-nondirectory (buffer-file-name)))))))
+        ;; This is the case when we have a scratch/temporary buffer that
+        ;; contains embedded nuggets.  In such a case we would like to
+        ;; save the nuggets, but not save the scratch buffer holding
+        ;; them.  If you would like to save the scratch buffer to file,
+        ;; it is necessary to save as.
             ;;
             ;; Bleurgh. This breaks if you try and create a
             ;; new nugget by editing newnugget.freex, then
             ;; trying to save.
-	    (progn
-	      (setq freex-embed-ov-props
-		    (plist-put freex-embed-ov-props 'id nil))
-	      ;; set the save function to null so that the base file will
-	      ;; not be saved to disk (and is hence a throwaway buffer)
+        (progn
+          (setq freex-embed-ov-props
+            (plist-put freex-embed-ov-props 'id nil))
+          ;; set the save function to null so that the base file will
+          ;; not be saved to disk (and is hence a throwaway buffer)
               ;;
               ;; xxx
-              ;; 	      (setq freex-embed-ov-props
-              ;; 		    (plist-put freex-embed-ov-props 'save-funct 
-              ;; 			       'freex-embed-overlay-save-null))
+              ;;          (setq freex-embed-ov-props
+              ;;            (plist-put freex-embed-ov-props 'save-funct
+              ;;                   'freex-embed-overlay-save-null))
               ))
-          
-	  (dolist (hook freex-mode-hook)
-	    (eval (list hook)))
-	  ;; start using freex custom save
-	  (add-hook 'write-contents-hooks 'freex-embed-save nil t)
 
-	  ;; build the regex if this is the first time freex-mode has run
+      (dolist (hook freex-mode-hook)
+        (eval (list hook)))
+      ;; start using freex custom save
+      (add-hook 'write-contents-hooks 'freex-embed-save nil t)
+
+      ;; build the regex if this is the first time freex-mode has run
           (if (boundp 'freex-mode-has-run-already)
               nil ; do nothing
               (progn
@@ -191,4 +191,3 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'freex-mode)
-
