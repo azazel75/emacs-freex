@@ -4,7 +4,7 @@
 ;;
 ;; Author: Per B. Sederberg, Greg Detre
 ;; Keywords: hypermedia
-;; Date: 
+;; Date:
 ;;
 ;; This file is part of Emacs Freex.  It is not part of GNU
 ;; Emacs.
@@ -71,9 +71,9 @@ Functions should not modify the contents of the buffer."
   (freex-fontify-region (point-min) (point-max) t))
 
 (defvar freex-fontify-regexp-list
-  '((freex-element-regexp t 
-			  freex-xml-process-element
-			  (freex-fontify-elements)))
+  '((freex-element-regexp t
+              freex-xml-process-element
+              (freex-fontify-elements)))
   "List of regexps to search for and process for freex-fontify.")
 
 
@@ -110,24 +110,24 @@ active in the current buffer.")
 
 
 (defun freex-fontify-process-implicit-links (beg end)
-  (let ((matches (freex-sqlalchemy-get-all-matching-implicit-links 
-		  (buffer-substring-no-properties beg end)))
-	(modified-p (buffer-modified-p)))
+  (let ((matches (freex-sqlalchemy-get-all-matching-implicit-links
+          (buffer-substring-no-properties beg end)))
+    (modified-p (buffer-modified-p)))
     (unwind-protect
-	(save-excursion
-	  (save-restriction
-	    (widen)
-	    ;; loop over matches
-	    (dolist (match matches)
-	      ;; correct for the offset into the file
-	      (freex-fontify-implicit-link-from-range (+ beg (nth 0 match))
-						      (+ beg (nth 1 match))))
-	    (set-buffer-modified-p modified-p))))))
+    (save-excursion
+      (save-restriction
+        (widen)
+        ;; loop over matches
+        (dolist (match matches)
+          ;; correct for the offset into the file
+          (freex-fontify-implicit-link-from-range (+ beg (nth 0 match))
+                              (+ beg (nth 1 match))))
+        (set-buffer-modified-p modified-p))))))
 
 (defun freex-fontify-implicit-link-from-range (beg end)
   ;; must figure out beg and end
   (let ((link-text (buffer-substring-no-properties beg end))
-	(link-file nil))
+    (link-file nil))
     ;; only add link if alias exists and not already a link.
     ;;
     ;; PBS - This is why the case-insensitive implicit linking is not
@@ -135,7 +135,7 @@ active in the current buffer.")
     ;; the alias is JubbaWubba and we put in jubbawubba, it's not
     ;; found.
     (when (and (freex-sqlalchemy-exist-nugget-a link-text)
-	       (not (get-text-property beg 'freex-link)))
+           (not (get-text-property beg 'freex-link)))
       ;; is an alias, so set the link-file from the alias
       (setq link-file (freex-sqlalchemy-get-filename-a link-text))
       ;; set the link-text properties to interactive link
@@ -144,19 +144,19 @@ active in the current buffer.")
       ;; looks like a link but isn't clickable, making it
       ;; easier to add carriage returns at the end of a link
       (add-text-properties beg
-			   (- end 1)
-			   (list 'face 'freex-link-face 
-				 'freex-link t 
-				 'keymap freex-fontify-link-local-map
+               (- end 1)
+               (list 'face 'freex-link-face
+                 'freex-link t
+                 'keymap freex-fontify-link-local-map
                                  ;; doesn't seem to help
-				 ;; 'font-lock-multiline t
-				 'link-text link-text
-				 'link-file link-file))
+                 ;; 'font-lock-multiline t
+                 'link-text link-text
+                 'link-file link-file))
       (add-text-properties (- end 1)
                            end
-			   (list 'face 'freex-link-face
-				 'freex-link t
-				 ;; 'font-lock-multiline t
+               (list 'face 'freex-link-face
+                 'freex-link t
+                 ;; 'font-lock-multiline t
                                  )))))
 
 
@@ -173,18 +173,18 @@ active in the current buffer.")
         (modified-p (buffer-modified-p))
         deactivate-mark)
     (unwind-protect
-	(if (eq major-mode 'muse-mode)
-	    ;; remove only freex-specific properties
-	    (remove-text-properties
-	     begin end '(freex-link nil link-file nil link-text nil
-			      link-url nil))
-	  ;; remove all the props
-	  (remove-text-properties
-	   begin end '(face nil font-lock-multiline nil end-glyph nil
-			    invisible nil intangible nil display nil
-			    mouse-face nil keymap nil help-echo nil
-			    freex-link nil link-file nil link-text nil
-			    link-url nil read-only nil)))
+    (if (eq major-mode 'muse-mode)
+        ;; remove only freex-specific properties
+        (remove-text-properties
+         begin end '(freex-link nil link-file nil link-text nil
+                  link-url nil))
+      ;; remove all the props
+      (remove-text-properties
+       begin end '(face nil font-lock-multiline nil end-glyph nil
+                invisible nil intangible nil display nil
+                mouse-face nil keymap nil help-echo nil
+                freex-link nil link-file nil link-text nil
+                link-url nil read-only nil)))
       (set-buffer-modified-p modified-p))))
 
 
@@ -215,7 +215,7 @@ active in the current buffer.")
     (t (:bold t)))
   "Face for to deemphasize elements when fontified."
   :group 'freex-fontify)
-  
+
 
 ;; make section faces
 (defvar freex-fontify-max-sect 5)
@@ -275,26 +275,26 @@ active in the current buffer.")
 ;; <olink targetdoc="alias" targetptr="id">Jubba Doc</olink>
 (defun freex-fontify-element-olink (beg end attrs)
   (let ((beg-element-start beg)
-	(beg-element-finish nil)
-	(end-element-start nil)
-	(end-element-finish end)
-	(targetdoc (cdr (assoc "targetdoc" attrs)))
-	(targetptr (cdr (assoc "targetptr" attrs)))
-	(link-text nil)
-	(link-file nil)
-	(current-font-face 'freex-link-face))
+    (beg-element-finish nil)
+    (end-element-start nil)
+    (end-element-finish end)
+    (targetdoc (cdr (assoc "targetdoc" attrs)))
+    (targetptr (cdr (assoc "targetptr" attrs)))
+    (link-text nil)
+    (link-file nil)
+    (current-font-face 'freex-link-face))
     ;; set the missing parts of the element locations
     (save-match-data
       (goto-char beg)
       (setq beg-element-finish (and (looking-at "<[^>]+>")
-				 (match-end 0)))
+                 (match-end 0)))
       (goto-char end)
       (setq end-element-start (and (freex-looking-back "</[^>]+>")
-				   (match-beginning 0))))
+                   (match-beginning 0))))
     ;; see if it matches an alias
     (if (freex-sqlalchemy-exist-nugget-a targetdoc)
-	;; is an alias, so set the link-file from the alias
-	(setq link-file (freex-sqlalchemy-get-filename-a targetdoc))
+    ;; is an alias, so set the link-file from the alias
+    (setq link-file (freex-sqlalchemy-get-filename-a targetdoc))
       ;; process as a file
       (setq link-file targetdoc))
     ;; make sure file exists, if not, set link-file to nil
@@ -303,133 +303,133 @@ active in the current buffer.")
       ;; change the font face to broken link
       (setq current-font-face 'freex-link-broken-face))
     ;; set the link-text
-    (setq link-text (buffer-substring-no-properties 
-		     beg-element-finish
-		     end-element-start))
+    (setq link-text (buffer-substring-no-properties
+             beg-element-finish
+             end-element-start))
     ;; set the link-text properties
     (add-text-properties beg
-			 end
-			 (list 'face current-font-face
-			       'freex-link t
-			       'keymap freex-fontify-link-local-map 
-			       ;;'font-lock-multiline t
-			       'link-text link-text
-			       'link-file link-file))
+             end
+             (list 'face current-font-face
+                   'freex-link t
+                   'keymap freex-fontify-link-local-map
+                   ;;'font-lock-multiline t
+                   'link-text link-text
+                   'link-file link-file))
     ;; hide the element part
     (add-text-properties beg-element-start
-			 beg-element-finish
-			 (list 'invisible t))
+             beg-element-finish
+             (list 'invisible t))
     (add-text-properties end-element-start
-			 end-element-finish
-			 (list 'invisible t))))
+             end-element-finish
+             (list 'invisible t))))
 
 ;; <ulink url="http://jubba.html>My jubba site</ulink>
 (defun freex-fontify-element-ulink (beg end attrs)
   (let ((beg-element-start beg)
-	(beg-element-finish nil)
-	(end-element-start nil)
-	(end-element-finish end)
-	(link-url (cdr (assoc "url" attrs)))
-	(link-text nil)
-	(link-file nil)
-	(current-font-face 'freex-link-face))
+    (beg-element-finish nil)
+    (end-element-start nil)
+    (end-element-finish end)
+    (link-url (cdr (assoc "url" attrs)))
+    (link-text nil)
+    (link-file nil)
+    (current-font-face 'freex-link-face))
     ;; set the missing parts of the element locations
     (save-match-data
       (goto-char beg)
       (setq beg-element-finish (and (looking-at "<[^>]+>")
-				 (match-end 0)))
+                 (match-end 0)))
       (goto-char end)
       (setq end-element-start (and (freex-looking-back "</[^>]+>")
-				   (match-beginning 0))))
+                   (match-beginning 0))))
     ;; set the link-text
-    (setq link-text (buffer-substring-no-properties 
-		     beg-element-finish
-		     end-element-start))
+    (setq link-text (buffer-substring-no-properties
+             beg-element-finish
+             end-element-start))
     ;; set the link-text properties
     (add-text-properties beg
-			 end
-			 (list 'face current-font-face
-			       'freex-link t
-			       'keymap freex-fontify-link-local-map 
-			       ;;'font-lock-multiline t
-			       'link-text link-text
-			       'link-url link-url))
+             end
+             (list 'face current-font-face
+                   'freex-link t
+                   'keymap freex-fontify-link-local-map
+                   ;;'font-lock-multiline t
+                   'link-text link-text
+                   'link-url link-url))
     ;; hide the element part
     (add-text-properties beg-element-start
-			 beg-element-finish
-			 (list 'invisible t))
+             beg-element-finish
+             (list 'invisible t))
     (add-text-properties end-element-start
-			 end-element-finish
-			 (list 'invisible t))))
+             end-element-finish
+             (list 'invisible t))))
 
 (defvar freex-fontify-sect-number-format "%d) ")
 (defun freex-fontify-element-sect (beg end attrs)
   (let ((beg-element-start beg)
-	(beg-element-finish nil)
-	(end-element-start nil)
-	(end-element-finish end)
-	(sect-level (cdr (assoc "level" attrs)))
-	(sect-text nil)
-	(sect-face nil))
+    (beg-element-finish nil)
+    (end-element-start nil)
+    (end-element-finish end)
+    (sect-level (cdr (assoc "level" attrs)))
+    (sect-text nil)
+    (sect-face nil))
     ;; set the missing parts of the element locations
     (save-match-data
       (goto-char beg)
       (setq beg-element-finish (and (looking-at "<[^>]+>")
-				 (match-end 0)))
+                 (match-end 0)))
       (goto-char end)
       (setq end-element-start (and (freex-looking-back "</[^>]+>")
-				   (match-beginning 0))))
+                   (match-beginning 0))))
     ;; set the sect-text
-    (setq sect-text (buffer-substring-no-properties 
-		     beg-element-finish
-		     end-element-start))
+    (setq sect-text (buffer-substring-no-properties
+             beg-element-finish
+             end-element-start))
     ;; determine the proper face
     (when (and (> (string-to-int sect-level) 0)
-	       (< (string-to-int sect-level) freex-fontify-max-sect))
+           (< (string-to-int sect-level) freex-fontify-max-sect))
       ;; set the face
-      (setq sect-face (intern (concat "freex-sect-" sect-level "-face"))))  
+      (setq sect-face (intern (concat "freex-sect-" sect-level "-face"))))
     ;; set the sect-text properties
     (add-text-properties beg
-			 end
-			 (list 'face sect-face
-			       'keymap freex-fontify-sect-local-map
-			       'font-lock-multiline t))
+             end
+             (list 'face sect-face
+                   'keymap freex-fontify-sect-local-map
+                   'font-lock-multiline t))
     ;; hide the element part
     ;; Trying out adding numbering
     ;; It breaks the use of xml-parse
 ;;     (add-text-properties beg-element-start
-;; 			 beg-element-finish
-;; 			 (list 'display 
-;; 			       (format freex-fontify-sect-number-format 
-;; 				       (string-to-int sect-level))
-;; 			       'intangible t))
+;;           beg-element-finish
+;;           (list 'display
+;;                 (format freex-fontify-sect-number-format
+;;                     (string-to-int sect-level))
+;;                 'intangible t))
     (add-text-properties beg-element-start
-			 beg-element-finish
-			 (list ;'face 'freex-deemphasize-face
-			       'invisible t
-			       'intangible t
-			       ;'read-only t
-			       'rear-nonsticky t))
+             beg-element-finish
+             (list ;'face 'freex-deemphasize-face
+                   'invisible t
+                   'intangible t
+                   ;'read-only t
+                   'rear-nonsticky t))
     (add-text-properties end-element-start
-			 end-element-finish
-			 (list ;'face 'freex-deemphasize-face
-			       'invisible t
-			       'intangible t
-			       ;'read-only t
-			       'rear-nonsticky t))))
+             end-element-finish
+             (list ;'face 'freex-deemphasize-face
+                   'invisible t
+                   'intangible t
+                   ;'read-only t
+                   'rear-nonsticky t))))
 
 (defun freex-fontify-insert-sect-element (level)
   "Insert a section element at point."
   (interactive "nEnter section level (1-5): ")
   (let ((attrs (format "level=\"%d\"" level))
-	(sect-txt ""))
+    (sect-txt ""))
     ;; see if there is marked text to use instead
     (when mark-active
       ;; delete and set the text
       (setq sect-txt (delete-and-extract-region (point) (mark t))))
     ;; insert the element
     (freex-xml-insert-element-at-point "sect" attrs sect-txt
-				       'freex-fontify-region)
+                       'freex-fontify-region)
     ;; move the point to ideal place to enter the element text
     (goto-char (search-backward "</sect>" nil t))))
 
@@ -451,10 +451,10 @@ active in the current buffer.")
 
 ;; define how to handle an embedded file
 (defun freex-fontify-element-file (beg end attr)
-    (let ((beg-file nil) 
+    (let ((beg-file nil)
           (end-file nil)
           (filename nil)
-	  (text-tween-elements nil))
+      (text-tween-elements nil))
       (save-match-data
         (goto-char beg)
         (setq beg-file (and (looking-at "<[^>]+>")
@@ -463,19 +463,19 @@ active in the current buffer.")
         (setq end-file (and (freex-looking-back "</[^>]+>")
                             (match-beginning 0))))
       ;; get the file info
-      (setq text-tween-elements (buffer-substring-no-properties 
-                             beg-file 
+      (setq text-tween-elements (buffer-substring-no-properties
+                             beg-file
                              end-file))
       ;; feed the fileroot.freex in to the insert-file
       ;; functions
       (setq filename (freex-remove-extension text-tween-elements))
       (when (not (file-exists-p filename))
-	;; tell them that the file does not exist
-	(add-text-properties beg-file
-			     end-file
-			     (list 'face 'freex-link-broken-face)))))
+    ;; tell them that the file does not exist
+    (add-text-properties beg-file
+                 end-file
+                 (list 'face 'freex-link-broken-face)))))
 
 
-;; what do we do?    
+;; what do we do?
 (provide 'freex-fontify)
 ;; that's right

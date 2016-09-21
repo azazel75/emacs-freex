@@ -6,7 +6,7 @@
 ##
 ## Author: Per B. Sederberg, Greg Detre
 ## Keywords: hypermedia
-## Date: 
+## Date:
 ##
 ## This file is part of Emacs Freex.  It is not part of GNU
 ## Emacs.
@@ -48,9 +48,9 @@ import subprocess
 # from nltk_lite import stem
 # import cPickle
 
-# ,IPython.ultraTB  
+# ,IPython.ultraTB
 # sys.excepthook = IPython.ultraTB.FormattedTB( \
-#    mode='Verbose', color_scheme='Linux', call_pdb=1) 
+#    mode='Verbose', color_scheme='Linux', call_pdb=1)
 
 ############################################################
 # if you want to run test cases interactively in ipython to
@@ -119,11 +119,11 @@ class Nugget(object):
                  created=datetime.datetime.now(),
                  filename=""):
         self.content = content
-	self.created = created
+        self.created = created
         self.filename = filename
 
     def __repr__(self):
-        return '[Nug id: %d, Filename: %s, Created: %s]' % (self.id, 
+        return '[Nug id: %d, Filename: %s, Created: %s]' % (self.id,
                                                             self.filename,
                                                             self.created)
 
@@ -134,7 +134,7 @@ class Alias(object):
     def __init__(self,alias,
                  created=datetime.datetime.now()):
         self.alias = alias
-	self.created = created
+        self.created = created
 
     def __repr__(self):
         return '[Alias: %s]' % (self.alias)
@@ -143,12 +143,12 @@ class Alias(object):
 
 ############################################################
 class Action(object):
-    
+
     def __init__(self,action):
-	self.action = action
-        
+        self.action = action
+
     def __repr__(self):
-	return '[Action: %s]' % (self.action)
+        return '[Action: %s]' % (self.action)
 
 
 
@@ -156,11 +156,11 @@ class Action(object):
 class NuggetHistory(object):
 
     def __init__(self,action_id,date=datetime.datetime.now()):
-	self.action_id = action_id
-	self.date = date
+        self.action_id = action_id
+        self.date = date
 
     def __repr__(self):
-	return '[NugId: %d, ActionId: %d, Date: (%d,%d,%d)]' % \
+        return '[NugId: %d, ActionId: %d, Date: (%d,%d,%d)]' % \
                (self.nugid,
                 self.action_id,
                 self.date.year,
@@ -168,15 +168,15 @@ class NuggetHistory(object):
                 self.date.day)
 
 
-    
+
 ############################################################
 class AssocType(object):
 
     def __init__(self,assoc_type):
-	self.assoc_type = assoc_type
+        self.assoc_type = assoc_type
 
     def __repr__(self):
-	return '[Assoc Type: %s]' % (self.assoc_type)
+        return '[Assoc Type: %s]' % (self.assoc_type)
 
 
 
@@ -267,7 +267,7 @@ class Fsqa(object):
     # don't use booleans because they don't get transmitted
     # well to elisp
     use_lisp = 1
-    
+
     # tables
     nuggets = None
     aliases = None
@@ -312,7 +312,7 @@ class Fsqa(object):
             # connect to that database
             self.db = create_engine('sqlite:///' + db_fullfile)
             # self.db.echo = True
-        
+
         try: self.metadata = BoundMetaData(self.db)
         except: self.metadata = MetaData(self.db)
 
@@ -328,7 +328,7 @@ class Fsqa(object):
         # create the mappers
         # self.create_mappers()
 
-    
+
 
     ############################################################
     def initialize_db(self):
@@ -355,14 +355,14 @@ class Fsqa(object):
                    nullable=False,default=datetime.datetime.now())
             )
         self.aliases.create()
-        
+
         self.actions = Table(
             'actions',self.metadata,
             Column('id',Integer,primary_key=True),
             Column('action',String(40),nullable=False),
             )
         self.actions.create()
-    
+
         self.nugget_history = Table(
             'nugget_history',self.metadata,
             Column('id',Integer,primary_key=True),
@@ -374,7 +374,7 @@ class Fsqa(object):
                    nullable=False,default=datetime.datetime.now())
             )
         self.nugget_history.create()
-    
+
         self.assoc_types = Table(
             'assoc_types',self.metadata,
             Column('id',Integer,primary_key=True),
@@ -405,13 +405,13 @@ class Fsqa(object):
         i.execute({'id':ACTION_INSERT,'action':'Nugget Insert'},
                   {'id':ACTION_MODIFY,'action':'Nugget Modify'},
                   {'id':ACTION_ADDALIAS,'action':'Nugget Add Alias'})
-        
+
         i = self.assoc_types.insert()
         i.execute({'id':ASSOC_TAG,'assoc_type':'Assoc Tag'},
                   {'id':ASSOC_IMPLICIT,'assoc_type':'Assoc Implicit'},
                   {'id':ASSOC_EXPLICIT,'assoc_type':'Assoc Explicit'},
                   {'id':ASSOC_EMBEDDED,'assoc_type':'Assoc Embedded'})
-        
+
         i = self.nuggets.insert()
 
         i = self.nugget_history.insert()
@@ -433,13 +433,13 @@ class Fsqa(object):
         mapper(Alias,self.aliases)
         mapper(Action,self.actions)
         mapper(AssocType,self.assoc_types)
-        
+
         mapper(NuggetHistory,self.nugget_history,properties={
                 'action': relation(Action) #,cascade="all, delete-orphan")
                 })
 
 #         mapper(NuggetNoAssoc,self.nuggets,properties={
-#                 'aliases': relation(Alias, 
+#                 'aliases': relation(Alias,
 #                                     cascade="all, delete-orphan"),
 #                 'nugget_history': relation(NuggetHistory,
 #                                            cascade="all,delete-orphan")
@@ -447,13 +447,13 @@ class Fsqa(object):
 
         mapper(TagParent,self.nugget_assocs,properties={
                 'assoc_type': relation(AssocType),
-#                 'parent_nugget': relation(NuggetNoAssoc, 
+#                 'parent_nugget': relation(NuggetNoAssoc,
 #                                           primaryjoin=self.nugget_assocs.c.dest_nugid==NuggetNoAssoc.c.id,
 #                                           cascade="all,delete-orphan"),
                 })
         mapper(TagChild,self.nugget_assocs,properties={
                 'assoc_type': relation(AssocType),
-#                 'child_nugget': relation(NuggetNoAssoc, 
+#                 'child_nugget': relation(NuggetNoAssoc,
 #                                          primaryjoin=self.nugget_assocs.c.src_nugid==NuggetNoAssoc.c.id,
 #                                          cascade="all,delete-orphan"),
                 })
@@ -469,38 +469,38 @@ class Fsqa(object):
         mapper(BackwardExplicitLink,self.nugget_assocs,properties={
                 'assoc_type': relation(AssocType),
                 })
-        
+
         mapper(Nugget,self.nuggets,properties={
-            'aliases': relation(Alias, 
+            'aliases': relation(Alias,
                                 cascade="all, delete-orphan"),
             'nugget_history': relation(NuggetHistory,
                                        cascade="all,delete-orphan"),
-            'forward_implicit_links': relation(ForwardImplicitLink, 
+            'forward_implicit_links': relation(ForwardImplicitLink,
                                                primaryjoin=and_(self.nuggets.c.id==ForwardImplicitLink.c.src_nugid,
                                                                 self.nugget_assocs.c.assoc_type_id==ASSOC_IMPLICIT),
                                                cascade="all,delete-orphan"),
-            'backward_implicit_links': relation(BackwardImplicitLink, 
+            'backward_implicit_links': relation(BackwardImplicitLink,
                                                 primaryjoin=and_(self.nuggets.c.id==BackwardImplicitLink.c.dest_nugid,
                                                                  self.nugget_assocs.c.assoc_type_id==ASSOC_IMPLICIT),
                                                 cascade="all,delete-orphan"),
-            'forward_explicit_links': relation(ForwardExplicitLink, 
+            'forward_explicit_links': relation(ForwardExplicitLink,
                                                primaryjoin=and_(self.nuggets.c.id==ForwardExplicitLink.c.src_nugid,
                                                                 self.nugget_assocs.c.assoc_type_id==ASSOC_EXPLICIT),
                                                cascade="all,delete-orphan"),
-            'backward_explicit_links': relation(BackwardExplicitLink, 
+            'backward_explicit_links': relation(BackwardExplicitLink,
                                                 primaryjoin=and_(self.nuggets.c.id==BackwardExplicitLink.c.dest_nugid,
                                                                  self.nugget_assocs.c.assoc_type_id==ASSOC_EXPLICIT),
                                                 cascade="all,delete-orphan"),
-            'tag_parents': relation(TagParent, 
+            'tag_parents': relation(TagParent,
                                     primaryjoin=and_(self.nuggets.c.id==TagParent.c.src_nugid,
                                                      TagParent.c.assoc_type_id==ASSOC_TAG),
                                     cascade="all,delete-orphan"),
-            'tag_children': relation(TagChild, 
+            'tag_children': relation(TagChild,
                                      primaryjoin=and_(self.nuggets.c.id==TagChild.c.dest_nugid,
                                                       TagChild.c.assoc_type_id==ASSOC_TAG),
                                      cascade="all,delete-orphan")
             })
-        
+
 
 
     ############################################################
@@ -509,10 +509,10 @@ class Fsqa(object):
         # Loading already-created
         self.nuggets = Table('nuggets', self.metadata,
                         autoload=True)
-        
+
         self.actions = Table('actions', self.metadata,
                         autoload=True)
-    
+
         self.nugget_history = Table('nugget_history', self.metadata,
                                autoload=True)
 
@@ -524,8 +524,8 @@ class Fsqa(object):
 
         self.nugget_assocs = Table('nugget_assocs',self.metadata,
                               autoload=True)
-    
-    
+
+
 
 ############################################################
 # exceptions
@@ -608,10 +608,10 @@ def create_fsqa_test():
     of FsqaTest, populates it, and returns just the fsqa
     member variable.
     """
-    
+
     # from freex_sqlalchemy_test import *
     import freex_sqlalchemy_test
-    
+
     fsqa_test = freex_sqlalchemy_test.FsqaTests()
     fsqa_test.setUp()
     fsqa_test.populate()
@@ -657,7 +657,7 @@ def update_implicit_link_regexp_original(aliases=None):
     # the global regexp
     global impLinkRegexp
 
-    # only bother with the regexes if we're in emacs (i.e. use_lisp = True) 
+    # only bother with the regexes if we're in emacs (i.e. use_lisp = True)
     # AND emacs wants us to
     if fsqa.use_lisp and not lisp.freex_enable_implicit_links.value():
         # xxx - cheat and exit so it works without hyperlinks with
@@ -689,7 +689,7 @@ def update_implicit_link_regexp_original(aliases=None):
     #
     # the \\b that gets
     # added later will ensure that there's a word boundary
-    # of *some* kind. 
+    # of *some* kind.
     aliasRegexpStr = aliasRegexpStr.replace('\\ ', ' ?\\\n? *')
 
     # for ages, it wasn't matching things like 'Smith &
@@ -725,7 +725,7 @@ def update_implicit_link_regexp_firstn(maxlen=4):
     if fsqa.use_lisp and not lisp.freex_enable_implicit_links.value():
         impLinkRegexpFirstn = re.compile('', re.MULTILINE)
         return
-    
+
     all_aliases = get_all_aliases()
     # add lower() here and elsewhere if you want case-insensitive
     # you need the strip(), otherwise e.g. '200 ' will come before '2006'
@@ -777,14 +777,14 @@ def get_all_matching_implicit_links_original(textToSearch):
     global impLinkRegexp
     # make sure it's filled
     if impLinkRegexp is None:
-	update_implicit_link_regexp_original()
+        update_implicit_link_regexp_original()
 
     # get the start and endpoints for the matchranges
     matchranges = [list(match.span()) for match in impLinkRegexp.finditer(textToSearch)]
 
     # return the matchranges
     return matchranges
-    
+
 
 
 ############################################################
@@ -806,7 +806,7 @@ def get_all_matching_implicit_links_twostage(textToSearch):
 
     global impLinkRegexpFirstn
     if impLinkRegexpFirstn is None:
-	aliasRegexpStr, impLinkRegexpFirstn = update_implicit_link_regexp_firstn()
+        aliasRegexpStr, impLinkRegexpFirstn = update_implicit_link_regexp_firstn()
 
     # find the matchranges based on the first N characters
     matchranges_firstn = [list(match.span()) for match in impLinkRegexpFirstn.finditer(textToSearch)]
@@ -842,7 +842,7 @@ def get_all_matching_implicit_links_twostage(textToSearch):
 
 #     # xxx - ALL_ALIASES should just be a global, but construct it for now
 #     aliases = []
-#     for alias_set in firstn_to_aliases.values(): 
+#     for alias_set in firstn_to_aliases.values():
 #         aliases += alias_set
 #     aliases = set(aliases)
     # wordset_aliases = get_all_matching_implicit_links_wordset(textToSearch, aliases)
@@ -871,7 +871,7 @@ def get_all_matching_implicit_links_wordset(txt, aliases):
     Designed to be run as a late-stage whittling for
     multi-word aliases whose first few characters are
     definitely in TXT.
-    
+
     Returns FOUNDS, a subset of ALIASES. N.B. This is overly
     permissive - you still need to run a regex afterwards
     with the exact aliases to be certain they match, and to
@@ -937,7 +937,7 @@ def get_contents(nugid):
 
     if not isinstance(nugid,int):
         raise ShouldBeInt
-    
+
     sel = 'select content from nuggets where id = %d' % \
           nugid
 
@@ -969,7 +969,7 @@ def get_aliases(nugid):
 
 ############################################################
 def get_aliases_delim_a(alias):
-    interactions[get_aliases_delim_a] = ''    
+    interactions[get_aliases_delim_a] = ''
     return get_aliases_delim(get_nugid_from_alias(alias))
 
 
@@ -979,18 +979,18 @@ def get_aliases_delim(nugid):
 
     if nugid==None:
         raise CantBeNone
-    
+
     try:
         nugid = int(nugid)
     except:
         raise ShouldBeInt
-    
+
     return u'; '.join(get_aliases(nugid))
 
     interactions[get_alias_from_nugid] = ''
 
     nugid = int(nugid)
-    
+
     aliases = get_aliases(nugid)
     if len(aliases):
         return aliases[0]
@@ -1005,7 +1005,7 @@ def get_alias_from_nugid(nugid):
     """
     Get the first alias for this nugid.
     """
-    
+
     try:
         nugid = int(nugid)
     except:
@@ -1098,7 +1098,7 @@ def add_alias(nugid,alias):
         alias = unicode(alias)
     if not isinstance(alias,unicode):
         raise ShouldBeUnicode
-    
+
     # die loudly if the nugget doesn't exist at all
     if not exist_nugget(nugid):
         raise NonexistentNugid
@@ -1136,7 +1136,7 @@ def remove_alias(nugid,alias):
         nugid = int(nugid)
     except:
         raise ShouldBeInt
-    
+
     dlt = 'delete from aliases where nugid = %d and alias = "%s"' % \
           (int(nugid),alias)
     fsqa.db.execute(dlt)
@@ -1152,7 +1152,7 @@ def remove_aliases(nugid):
         nugid = int(nugid)
     except:
         raise ShouldBeInt
-    
+
     dlt = 'delete from aliases where nugid = %d' % nugid
     fsqa.db.execute(dlt)
 
@@ -1169,10 +1169,10 @@ def remove_tag_parents_from(child_nugid):
 def remove_tag_children_from(dest_nugid):
 
     if dest_nugid==None: raise CantBeNone
-    
+
     try: dest_nugid = int(dest_nugid)
     except: raise ShouldBeInt
-    
+
     dlt = 'delete from nugget_assocs where dest_nugid = %d' % dest_nugid
     fsqa.db.execute(dlt)
 
@@ -1246,7 +1246,7 @@ def add_nugget(filename,content):
     """Create a nugget containing CONTENT and return the
     nugid. Adds the filename (without extension) to the list
     of aliases. Creates an empty file called FILENAME if one
-    doesn't already exist.    
+    doesn't already exist.
     """
     if isinstance(filename,str): filename = unicode(filename)
     if isinstance(content,str): content = unicode(content)
@@ -1255,7 +1255,7 @@ def add_nugget(filename,content):
 
     if filename==None:
         raise CantBeNone
-    
+
     # check that filename includes an extension
     # (e.g. 'freex')
     if not has_ext(filename):
@@ -1273,7 +1273,7 @@ def add_nugget(filename,content):
 
     if len(remove_ext(filename))==0:
         raise CantBeNone
-        
+
     # get rid of all the quotation marks, so that it doesn't
     # screw up the SQL command. this shouldn't be an issue,
     # but it is
@@ -1344,7 +1344,7 @@ def put_contents(nugid,content):
     # interactions[put_contents] = ''
 
     if nugid==None: raise CantBeNone
-    
+
     try: nugid = int(nugid)
     except: raise ShouldBeNumber
 
@@ -1374,7 +1374,7 @@ def put_contents(nugid,content):
 
     # write the contents out to the file
     # freex_mode_dir = lisp.freex_mode_dir.value()
-    
+
     # filename = get_filename(nugid)
     # f = open( os.path.join(fsqa.database_dir,filename), 'w')
     # f.write(content)
@@ -1384,7 +1384,7 @@ def put_contents(nugid,content):
 
 ############################################################
 def get_tag_parents_for_a(alias):
-    
+
     """
     Gets all the tag parents that ALIAS has
     """
@@ -1407,7 +1407,7 @@ def get_tag_parents_for(src_nugid):
     try:
         src_nugid = int(src_nugid)
     except:
-        raise ShouldBeInt            
+        raise ShouldBeInt
 
     sel = 'select dest_nugid from nugget_assocs where src_nugid = %d' \
           % src_nugid
@@ -1552,9 +1552,9 @@ def filter_by_tag_parents(inp,
         # N.B. you need %%%s%% if you want to get %yourvar%
         content_q = u' AND '.join(
             ['content LIKE "%%%s%%"' % x for x in ft_patterns])
-        
+
         sel = """
-        SELECT nuggets.id, alias FROM nuggets, aliases WHERE 
+        SELECT nuggets.id, alias FROM nuggets, aliases WHERE
           nuggets.id=aliases.nugid AND %s
           %s
           ORDER BY %s
@@ -1569,7 +1569,7 @@ def filter_by_tag_parents(inp,
     else:
         # the user fed in some tags to filter by (possibly as
         # well as some full text)
-        
+
         # get the nugids of all the parent aliases
         parent_nugids = [get_nugid_from_alias(x) for x in parent_aliases_no_ft]
 
@@ -1609,7 +1609,7 @@ def filter_by_tag_parents(inp,
             SELECT src_nugid FROM nugget_assocs WHERE
             (assoc_type_id=%i AND dest_nugid=%i)
             OR
-            (assoc_type_id=%i AND dest_nugid IN 
+            (assoc_type_id=%i AND dest_nugid IN
             (SELECT src_nugid FROM nugget_assocs WHERE
             assoc_type_id=%i AND dest_nugid=%i))
             """ % (ASSOC_TAG, parent_nugids[0], \
@@ -1640,13 +1640,13 @@ def filter_by_tag_parents(inp,
                 (
                 (assoc_type_id=%i AND dest_nugid=%i)
                 OR
-                (assoc_type_id=%i AND dest_nugid IN 
+                (assoc_type_id=%i AND dest_nugid IN
                 (SELECT src_nugid FROM nugget_assocs WHERE
                 assoc_type_id=%i AND dest_nugid=%i))
                 )
                 AND src_nugid IN (%s)
                 """ % (ASSOC_TAG, pnugid, \
-                       ASSOC_TAG, ASSOC_TAG, pnugid, 
+                       ASSOC_TAG, ASSOC_TAG, pnugid,
                        complete_q)
 
             else:
@@ -1668,7 +1668,7 @@ def filter_by_tag_parents(inp,
             # e.g. content LIKE "%hello%" AND content LIKE "%world%"
             content_q = u' AND '.join( \
                         ['content LIKE "%%%s%%"' % x for x in ft_patterns])
-            
+
             complete_q = """
             SELECT nugid,alias FROM aliases, nuggets WHERE
             nuggets.id=aliases.nugid
@@ -1719,7 +1719,7 @@ def filter_by_tag_parents(inp,
         # user has already used to filter things by
         parent_nugid_list = u', '.join(
             [unicode(x) for x in parent_nugids])
-        
+
         # now we want to find the tag-parents that are common to
         # all the tag-children, and suggest them as possible
         # ways to winnow down the search
@@ -1752,7 +1752,7 @@ def filter_by_tag_parents(inp,
         stp = [preamb + x + '/' for x in stp]
 
     suggestions = []
-    
+
     # if the user specified that they don't want tag-parents
     # with a double-slash, then we need a double-slash on
     # the end of what we return
@@ -1788,7 +1788,7 @@ def filter_by_tag_parents(inp,
 
     if display_sql:
         print complete_q
-        
+
     return suggestions
 
 
@@ -1810,12 +1810,12 @@ def filter_by_tag_parents_fnames_only(inp,
     #     # make sure that the last slash is a double-slash,
     #     # e.g. turn 'hello/cruel/world' into
     #     # 'hello/cruel//world'
-    
+
     #     # if there's no double slash
     #     if inp.find('//') == -1:
     #         # if there is a double-slash
     #         pass
-    
+
     #     # if there is at least one slash
     #     if inp.find('/'):
     #         # is there also a double-slash??
@@ -1889,7 +1889,7 @@ def edit_tag_parents_in_minibuffer_complete(inp):
     completions.
 
     It cribs heavily from filter_by_tag_parents.
-    
+
     """
 
     lisp.message(inp)
@@ -1906,12 +1906,12 @@ def edit_tag_parents_in_minibuffer_complete(inp):
     # typed 'emac', don't return '/emacs' as a suggestion
     if len(inp_parts)>1:
         # there are some preceding aliases
-    
+
         # we're only going to complete the last in the list, but
         # we need to store the preceding ones, because we'll
         # have to string them back together after
         preceding_aliases = inp_parts[:-1]
-        
+
         # reassemble things
         preamb = u'/'.join(preceding_aliases) + u'/'
 
@@ -1945,7 +1945,7 @@ def edit_tag_parents_in_minibuffer_complete(inp):
 #         lisp.message(str(suggestions))
 #     else:
 #         print suggestions
-    
+
     return suggestions
 
 
@@ -1979,7 +1979,7 @@ def intersect_tag_children_a_from_multiple_tag_parents_a(parent_aliases):
 
     if not all_unicode(parent_aliases):
         raise ShouldBeUnicode
-    
+
     # child_alias_lists = map(get_tag_children_for_a,parent_aliases)
     child_alias_lists = [get_tag_children_for_a(x) for x in parent_aliases]
 
@@ -1995,7 +1995,7 @@ def union_tag_parents_a_from_multiple_tag_children_a(child_aliases):
     """
     Find the tag-parents that all our tag-children have in common
     """
-    
+
     # if they fed us empty air, don't get angry
     if not child_aliases:
         return None
@@ -2038,10 +2038,10 @@ def union_lists_no_duplicates(lists):
 
     newlist = []
     for l in lists:
-        
+
         if not isinstance(l,list):
             raise ShouldBeList
-        
+
         newlist.extend(l)
     return list(set(newlist))
 
@@ -2063,7 +2063,7 @@ def intersect_lists(lists):
         # check that all of the sublists in LISTS are lists
         if not isinstance(l,list):
             raise ShouldBeList
-        
+
         # if any of the items in any of the sublists are
         # themselves a list, then raise an exception
         # if any( map(lambda x: isinstance(x,list),l) ):
@@ -2217,7 +2217,7 @@ def exist_nugget_a(alias):
 
     if len(alias)==0:
         return None
-    
+
     try:
         get_nugid_from_alias(alias)
         return alias
@@ -2228,7 +2228,7 @@ def exist_nugget_a(alias):
 
 ############################################################
 def remove_surplus_whitespace(s):
-    
+
     """
     This finds any multi-space sequences or carriage returns
     in the string, and replaces them with a single space.
@@ -2260,7 +2260,7 @@ def add_ext(filename):
 
     if has_ext(filename):
         raise NeedsNoExtension
-        
+
     return filename + ext
 
 
@@ -2452,7 +2452,7 @@ def add_tag_child_a_to_tag_parent_a(child_alias,parent_alias):
         return None
     if parent_alias==None:
         return None
-    
+
     # if either alias is completely whitespace, then assume
     # it's a mistake and ignore it
     if not len(child_alias):
@@ -2478,7 +2478,7 @@ def add_tag_child_a_to_tag_parent_a(child_alias,parent_alias):
 
     # don't tag them together if they've already been tagged
     # together
-    # 
+    #
     # this does allow bidirectional tags though... maybe a
     # bad idea???
     if parent_nugid in get_tag_parents_for(child_nugid):
@@ -2529,7 +2529,7 @@ def put_tag_parents_delim_slash(child_nugid,parent_aliases):
 
     This is a temporary measure while we decide on the
     delimiter for tags (slashes, semicolons or hyphens...)
-    
+
     """
 
     # strictly, we don't really need to do the stripping
@@ -2540,8 +2540,8 @@ def put_tag_parents_delim_slash(child_nugid,parent_aliases):
         parent_aliases_list)
 
     return put_tag_parents_delim(child_nugid, parent_aliases_semicolon_str)
-        
-        
+
+
 
 ############################################################
 def put_tag_parents_delim(child_nugid,parent_aliases):
@@ -2552,7 +2552,7 @@ def put_tag_parents_delim(child_nugid,parent_aliases):
 
     # just in case
     child_nugid = int(child_nugid)
-    
+
     child_alias = get_alias_from_nugid(child_nugid)
 
     # start by removing all the existing tag_parents from
@@ -2589,13 +2589,13 @@ def put_tag_parents_delim3(child_nugid,parent_aliases):
     """
     Third way notes.
     """
-    
+
     # make sure child_nugid is int
     child_nugid = int(child_nugid)
 
     if not isinstance(parent_aliases,unicode):
         raise ShouldBeUnicode
-    
+
     # split the semicolon-delimited list apart and remove
     # white space around each alias
     parent_aliases = [x.strip() for x in parent_aliases.split(';')]
@@ -2607,7 +2607,7 @@ def put_tag_parents_delim3(child_nugid,parent_aliases):
 
     # get the list of aliases that do not have nugids
     new_aliases = filter(lambda x: x not in existing_parent_aliases, parent_aliases)
-  
+
     # get the child nugget we'll be dealing with
     child_nug = fsqa.session.query(Nugget).select_by(id=child_nugid)[0]
 
@@ -2667,7 +2667,7 @@ def put_tag_parents_delim2(child_nugid,parent_aliases):
 
     if not isinstance(parent_aliases,unicode):
         raise ShouldBeUnicode
-    
+
     # split the semicolon-delimited list apart and remove
     # white space around each alias
     parent_aliases = [x.strip() for x in parent_aliases.split(';')]
@@ -2681,7 +2681,7 @@ def put_tag_parents_delim2(child_nugid,parent_aliases):
     fsqa.nugget_assocs.delete((fsqa.nugget_assocs.c.src_nugid==child_nugid) & \
                               (fsqa.nugget_assocs.c.assoc_type_id==ASSOC_TAG) & \
                               ~(fsqa.nugget_assocs.c.dest_nugid.in_(s))).execute()
-    
+
     # find out the parent_aliases that are already in nugget_assocs
     s = select([fsqa.aliases.c.alias],
                (fsqa.nugget_assocs.c.src_nugid==child_nugid) & \
@@ -2697,7 +2697,7 @@ def put_tag_parents_delim2(child_nugid,parent_aliases):
     s = select([fsqa.aliases.c.alias],
                fsqa.aliases.c.alias.in_(*notThere))
     hasAlias = [x.alias for x in s.execute()]
-    
+
     # get list of aliases whose nuggets we must create
     aliasExists = [x in hasAlias for x in notThere]
 
@@ -2875,7 +2875,7 @@ def get_nugid_from_filename(filename):
 ############################################################
 def get_all_ids():
     """Return a list of nugget ID numbers."""
-    
+
     sel = 'select id from nuggets'
 
     ids = fsqa.db.execute(sel).fetchall()
@@ -2886,7 +2886,7 @@ def get_all_ids():
 def get_all_aliases(nugids_to_exclude=None):
     """Return all the aliases in the database - useful for
     creating tab-completion lists."""
-    
+
     sel = 'select alias from aliases'
 
     if nugids_to_exclude:
@@ -2916,7 +2916,7 @@ def get_all_aliases(nugids_to_exclude=None):
 #     """Return a list of aliases and nugget id-strings (in '#%d'
 #     form).
 #     """
-    
+
 #     # need to remove any of the nugids_to_exclude from the
 #     # result of get_all_ids
 #     #
@@ -2981,7 +2981,7 @@ def change_filename_from(old,new):
     # check that the OLD filename does already
     # exist in the database
     nugid = get_nugid_from_filename(old)
-    
+
     # we want to check that the NEW filename doesn't already
     # exist in the database. we want GET_NUGID_FROM_FILENAME
     # to fail...
@@ -2996,7 +2996,7 @@ def change_filename_from(old,new):
     try:
         # change the filename field for this nugget
         upd = 'update nuggets set filename="%s" where filename = "%s"' % \
-              (new,old)    
+              (new,old)
         fsqa.db.execute(upd)
 
         # the new filename requires a new alias (though this
@@ -3035,7 +3035,7 @@ def remove_nugget_a(alias):
         return remove_nugget(get_nugid_from_alias(alias))
     except NonexistentNugid:
         raise NonexistentAlias
-    
+
 
 
 ############################################################
@@ -3133,13 +3133,13 @@ def get_last_modtime_as_dt(nugid):
 
     If there is no modtime, returns ''.
     """
-    
+
     try: nugid = int(nugid)
     except: raise ShouldBeInt
-    
+
     if not exist_nugget(nugid):
         raise NonexistentNugid
-    
+
     try:
         sel = 'select max(date) from nugget_history ' + \
               'where action_id = 2 ' + \
@@ -3147,22 +3147,22 @@ def get_last_modtime_as_dt(nugid):
         modtime = fsqa.db.execute(sel).fetchone()[0]
     except:
         return None
-    
+
     if not modtime:
         return None
 
     return dt_from_str(modtime)
 
 
-    
+
 ############################################################
 def get_last_modtime(nugid):
-    
+
     """
     Returns a 'yy-mm-dd hh-mm-ss' timestamp string of the
     last modification time for this nugget.
     """
-    
+
     # xxx - should be renamed to get_last_modtime_as_str
 
     modtime = get_last_modtime_as_dt(nugid)
@@ -3175,7 +3175,7 @@ def get_last_modtime(nugid):
         # modtime = modtime[:-7]
 
     return modtime
-   
+
 
 
 ############################################################
@@ -3277,7 +3277,7 @@ def choose_random_untagged():
         # of tags
         if len(tag_parents)>1:
             continue
-        
+
         # i have a lot of aliases in the form 'yymmdd' that
         # correspond to dates. i don't want to tag these. so
         # i'm going to automatically exclude 6-digit aliases
@@ -3404,7 +3404,7 @@ def extract_fulltext_patterns(parent_aliases):
     parent_aliases = [x for x in parent_aliases if x != '']
 
     for n,alias in enumerate(parent_aliases):
-        
+
         if (alias[0]=='"') and (alias[-1]=='"'):
             # this is a fulltext pattern
             #
@@ -3443,9 +3443,9 @@ def fulltext_whittle_nugids(aliases, patterns, case_sensitive=False):
 
         # 1/0
 
-        
+
         filenames = fsqa.db.execute(sel).fetchall()
-        
+
         if len(filenames)>0:
             filenames = [x[0] for x in filenames]
 
@@ -3472,7 +3472,7 @@ def fulltext(filenames, patterns, case_sensitive=False):
 
     """
     Returns: FOUND_FILES (list of filename strings)
-    
+
     Feed in a list of filenames (complete with extensions),
     which will be fed to agrep for full-text
     searching. Returns a list of files.
@@ -3501,7 +3501,7 @@ def fulltext(filenames, patterns, case_sensitive=False):
         raise ShouldBeList
     if not isinstance(patterns,list):
         raise ShouldBeList
-    
+
     if case_sensitive:
         case_flag = ''
     else:
@@ -3521,7 +3521,7 @@ def fulltext(filenames, patterns, case_sensitive=False):
             pat = pat[1:]
         if pat[-1]=='"':
             pat = pat[0:-1]
-            
+
     pattern_str = u';'.join( \
         [x.strip() for x in patterns])
 
@@ -3693,13 +3693,13 @@ def exist_nugget_multi(nugs):
 
     """
     This takes in either a:
-    
+
     - single int nugid
     - str alias
     - list of int nugids
     - list of str aliases
 
-    and determines whether they all exist. Returns 
+    and determines whether they all exist. Returns
     """
 
     # this appears to be faster than exist_nugget for many
@@ -3728,15 +3728,15 @@ def exist_nugget_multi(nugs):
         for nugid in nugids:
             crits.append('nugid="%i"' % nugid)
         sel = sel + u' OR '.join(crits)
-        
+
         results = fsqa.db.execute(sel).fetchall()
         found_nugids = [x[0] for x in results]
-        
+
         found = [False]*len(nugids)
         for a in xrange(0,len(nugids)):
             if nugids[a] in found_nugids:
                 found[a] = True
-        
+
     elif lit==str:
 
         aliases = nugs
@@ -3746,7 +3746,7 @@ def exist_nugget_multi(nugs):
         for al in aliases:
             crits.append('alias="%s"' % al)
         sel = sel + u' OR '.join(crits)
-        
+
         results = fsqa.db.execute(sel).fetchall()
         found_aliases = [x[01] for x in results]
 
@@ -3754,12 +3754,12 @@ def exist_nugget_multi(nugs):
         for a in xrange(0,len(aliases)):
             if aliases[a] in found_aliases:
                 found[a] = True
-            
+
     else:
         raise IncorrectListItemsType
 
     return found
-        
+
 
 # ############################################################
 # def dupes(lst):
@@ -3770,7 +3770,7 @@ def exist_nugget_multi(nugs):
 
 #     return len(lst)!=len(set(lst))
 
-    
+
 
 ############################################################
 # i couldn't figure out a way to get this to behave right if
@@ -3864,4 +3864,3 @@ def uniquify_list(lst):
 
 update_implicit_link_regexp = update_implicit_link_regexp_firstn
 get_all_matching_implicit_links = get_all_matching_implicit_links_twostage
-
