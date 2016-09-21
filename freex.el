@@ -76,7 +76,8 @@ directory." )
   "Set of hooks that get run at the end of freexify.")
 
 
-
+(defvar freex-enable-implicit-links "t"
+  "azazel: put here so that this stuff will work")
 
 ;; ;; This could have issues if two links are right next to one another
 ;; (defun freex-link-info-at (&optional pos)
